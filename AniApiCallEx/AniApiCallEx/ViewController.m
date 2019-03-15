@@ -30,7 +30,7 @@
         }
     }];
     
-    // rest method
+    // GET method
     
     [[AniApiMethod sharedManager] callGETJSONMethodApi:[NSURL URLWithString:@"https://reqres.in/api/users?page=2"] completion:^(NSData *data, NSError *error) {
         NSError *jsonErro;
