@@ -240,9 +240,13 @@ NSMutableURLRequest *request;
     {
         [dicParam enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
             
-            NSString *stringParam=[NSString stringWithFormat:@"--%@\r\nContent-Disposition: form-data; name=\"%@\"\r\n\r\n%@",boundary,key,obj];
-            [dataPost appendData:[stringParam dataUsingEncoding:NSUTF8StringEncoding]];
-            [dataPost appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+//            NSString *stringParam=[NSString stringWithFormat:@"--%@\r\nContent-Disposition: form-data; name=\"%@\"\r\n\r\n%@",boundary,key,obj];
+//            [dataPost appendData:[stringParam dataUsingEncoding:NSUTF8StringEncoding]];
+//            [dataPost appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            [dataPost appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+            [dataPost appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", key] dataUsingEncoding:NSUTF8StringEncoding]];
+            [dataPost appendData:[[NSString stringWithFormat:@"%@\r\n", obj] dataUsingEncoding:NSUTF8StringEncoding]];
         }];
     }
 
@@ -250,26 +254,38 @@ NSMutableURLRequest *request;
     {
         [dicImage enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             
-            NSDictionary *dataDic=(NSDictionary *)obj;
-            NSString *fieldString = [NSString stringWithFormat:
-                                         @"--%@\r\nContent-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\nContent-Type: %@\r\nContent-Transfer-Encoding: binary\r\n\r\n",
-                                         boundary,
-                                         dataDic[@"name"],
-                                         dataDic[@"filename"],
-                                         dataDic[@"mimetype"]];
-            [dataPost appendData:[fieldString dataUsingEncoding:NSUTF8StringEncoding]];
+//            NSDictionary *dataDic=(NSDictionary *)obj;
+//            NSString *fieldString = [NSString stringWithFormat:
+//                                         @"--%@\r\nContent-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\nContent-Type: %@\r\nContent-Transfer-Encoding: binary\r\n\r\n",
+//                                         boundary,
+//                                         dataDic[@"name"],
+//                                         dataDic[@"filename"],
+//                                         dataDic[@"mimetype"]];
+//            [dataPost appendData:[fieldString dataUsingEncoding:NSUTF8StringEncoding]];
+//            [dataPost appendData:dataDic[@"data"]];
+//            [dataPost appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+
+            [dataPost appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            [dataPost appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+            [dataPost appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", dataDic[@"name"], dataDic[@"filename"]] dataUsingEncoding:NSUTF8StringEncoding]];
+            [dataPost appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", dataDic[@"mimetype"]] dataUsingEncoding:NSUTF8StringEncoding]];
             [dataPost appendData:dataDic[@"data"]];
             [dataPost appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-
-            
         }];
     }
-    [dataPost appendData: [[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-    [request setValue:[NSString stringWithFormat:@"multipart/form-data; charset=%@; boundary=%@", charset, boundary]
-    forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long) [dataPost length]] forHTTPHeaderField:@"Content-Length"];
+//    [dataPost appendData: [[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+//    NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+//    [request setValue:[NSString stringWithFormat:@"multipart/form-data; charset=%@; boundary=%@", charset, boundary]
+//    forHTTPHeaderField:@"Content-Type"];
+//    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long) [dataPost length]] forHTTPHeaderField:@"Content-Length"];
+//    [request setHTTPMethod:@"POST"];
+//    [request setHTTPBody:dataPost];
+    [dataPost appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPMethod:@"POST"];
+    
+    [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+    
     [request setHTTPBody:dataPost];
     
     
